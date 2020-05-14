@@ -10,7 +10,6 @@
 #include "GraphExporter.h"
 
 int main() {
-
     Genome genome;
     InnovationCounter counter;
     GraphExporter exporter;
