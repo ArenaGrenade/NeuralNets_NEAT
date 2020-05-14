@@ -3,7 +3,6 @@
 #endif
 
 class NodeGene {
-
     private:
     lint id;
     Type type;
@@ -13,11 +12,11 @@ class NodeGene {
         this->type = type;
     }
 
-    lint get_id()  {
+    lint getId()  {
         return this->id;
     }
 
-    Type get_type() {
+    Type getType() {
         return this->type;
     }
 };

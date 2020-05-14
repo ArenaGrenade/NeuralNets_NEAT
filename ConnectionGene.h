@@ -42,4 +42,8 @@ class ConnectionGene {
     lint getInnovation() {
         return this->innovation_number;
     }
+
+    double getWeight() {
+        return this->weight;
+    }
 };

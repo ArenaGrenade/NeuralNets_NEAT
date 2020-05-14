@@ -3,3 +3,13 @@
 ################################################################################
 
 /.vs/NeuralNets_NEAT/v16
+/.vs
+/.vscode
+/Debug
+/ClassDiagram.cd
+/NeuralNets_NEAT.sln
+/NeuralNets_NEAT.vcxproj
+/NeuralNets_NEAT.vcxproj.filters
+/NeuralNets_NEAT.vcxproj.user
+/tempCodeRunnerFile.h
+*.exe
