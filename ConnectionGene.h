@@ -20,6 +20,15 @@ class ConnectionGene {
         this->innovation_number = innovation_number;
     }
 
+	//copy constructor
+	ConnectionGene(const ConnectionGene &connection2) {
+		this->in_node = connection2.in_node;
+		this->out_node = connection2.out_node;
+		this->weight = connection2.weight;
+		this->enabled = connection2.enabled;
+		this->innovation_number = connection2.innovation_number;
+	}
+
     //used to change weight durng mutations
     void setWeight(double weight) {
         this->weight = weight;
@@ -46,4 +55,8 @@ class ConnectionGene {
     double getWeight() {
         return this->weight;
     }
+
+	bool isEnabled() {
+		return this->enabled;
+	}
 };
