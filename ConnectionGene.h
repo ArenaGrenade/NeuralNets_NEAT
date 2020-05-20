@@ -29,7 +29,7 @@ class ConnectionGene {
 		this->innovation_number = connection2.innovation_number;
 	}
 
-    //used to change weight durng mutations
+    //used to change weight during mutations
     void setWeight(double weight) {
         this->weight = weight;
     }
