@@ -17,6 +17,8 @@ int main() {
     Genome genome;
     InnovationCounter counter;
     GraphExporter exporter;
+	std::default_random_engine generator;
+	std::normal_distribution<double> distribution(1.0, 0.25);
     genome.addNode(NodeGene(1, INPUT));
     genome.addNode(NodeGene(2, INPUT));
     genome.addNode(NodeGene(3, HIDDEN));
@@ -25,18 +27,22 @@ int main() {
     genome.addConnection(ConnectionGene(2, 3, 1.090131, true, counter.getNextInnovationNumber(2, 3)));
     genome.addConnection(ConnectionGene(3, 4, 1.02469, true, counter.getNextInnovationNumber(3, 4)));
 
-	char output_index_string[90] = { 0 };
+	/*char output_index_string[90] = { 0 };
 
-	sprintf_s(output_index_string, "C:/Users/rohan/Documents/Coding/C++/NeuralNets_NEAT/TestGraphs/NodeMutations/%d.txt", 1);
+	sprintf_s(output_index_string, "./TestGraphs/NodeMutations/%d.txt", 1);
 	std::cout << "Exporting network number " << 1 << " at " << output_index_string << std::endl;
 	exporter.Export(output_index_string, genome);
 	memset(output_index_string, 0, 90);
 	
 	for (int i = 2; i < 4; i++) {
 		genome.addNodeMutation(counter);
-		sprintf_s(output_index_string, "C:/Users/rohan/Documents/Coding/C++/NeuralNets_NEAT/TestGraphs/NodeMutations/%d.txt", i);
+		sprintf_s(output_index_string, "./TestGraphs/NodeMutations/%d.txt", i);
 		std::cout << "Exporting network number " << i << " at " << output_index_string << std::endl;
 		exporter.Export(output_index_string, genome);
 		memset(output_index_string, 0, 90);
-	}
+	}*/
+
+	genome.addConnectionMutation(counter);
+	genome.addConnectionMutation(counter);
+	genome.addConnectionMutation(counter);
 }
