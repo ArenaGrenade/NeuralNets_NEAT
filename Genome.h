@@ -12,14 +12,12 @@ class Genome {
 	* node_counter - long long int: The number of nodes in the current genome.
 	* node_genes - std::map<long long int, NodeGene>: The C++ map that contains a list of NodeGene and their IDs
 	* connection_genes - std::map<long long int, ConnectionGene>: The C++ map that consists of the Innovation number and the ConnectionGene
-	* graph - std::vector<std::vector<long long int>>: A 2-D array that will represent a graph in adjacency list format in some of the intermediate steps.
 	*/
 
   private:
 	lint node_counter;
 	std::map<lint, NodeGene> node_genes;
 	std::map<lint, ConnectionGene> connection_genes;
-	std::vector<std::vector<lint>> graph;
 
   public:
 	//----Constructors----//
@@ -169,7 +167,7 @@ class Genome {
 			}
 
 			if (!connection_exists && is_connection_possible) {
-				double random_weight = rand() % INT_MAX;
+				double random_weight = (double) rand() / RAND_MAX;
 				ConnectionGene new_connection(nodeA.getId(), nodeB.getId(), random_weight, true, counter.getNextInnovationNumber(nodeA.getId(), nodeB.getId()));
 				this->connection_genes.insert(std::make_pair(new_connection.getInnovation(), new_connection));
 				success = true;
@@ -182,5 +180,47 @@ class Genome {
 		else {
 			std::cout << "Created Connection" << std::endl;
 		}
+	}
+
+	Genome crossover(Genome parent1, Genome parent2) {
+		Genome child = Genome();
+
+		for (auto node_gene : parent1.getNodeGenes()) {
+			child.addNode(NodeGene(node_gene.second));
+		}
+
+		for (auto par1_connection_gene : parent1.getConnectionGenes()) {
+			auto par2_connection_gene = parent2.getConnectionGenes().find(par1_connection_gene.first);
+			if (par2_connection_gene != parent2.getConnectionGenes().end()) {
+				ConnectionGene child_con_gene = ((double)rand() / RAND_MAX < 0.5) ? par1_connection_gene.second : (*par2_connection_gene).second;
+				bool child_gene_disabled = !par1_connection_gene.second.isEnabled() || !(*par2_connection_gene).second.isEnabled();
+				if (child_gene_disabled && ((double) rand() / RAND_MAX) < CHILD_GENE_DISABLE_PROB) {
+					child_con_gene.disableConnection();
+				}
+			}
+			else {
+				child.addConnection(ConnectionGene(par1_connection_gene.second));
+			}
+		}
+
+		return child;
+	}
+
+	float compatibilityDistance(Genome genomeA, Genome genomeB, float c1, float c2, float c3) {
+		auto gene_counts = getGeneTypeCounts(genomeA, genomeB);
+		lint match_genes = gene_counts.first;
+		lint disjoint_genes - gene_counts.second.first;
+		lint excess_genes = gene_counts.second.second;
+
+		double avg_weight_diff = calculateAvgWeightDiff(genomeA, genomeB, match_genes);
+		return excess_genes * c1 + disjoint_genes * c2 + avg_weight_diff * c3;
+	}
+
+	std::pair<lint, std::pair<lint, lint>> getGeneTypeCounts(Genome genomeA, Genome genomeB) {
+
+	}
+
+	double calculateAvgWeightDiff(Genome genomeA, Genome genomeB, lint count_match_genes) {
+		double weightDifference = 0;
 	}
 };
