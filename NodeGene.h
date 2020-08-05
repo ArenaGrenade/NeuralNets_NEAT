@@ -30,6 +30,12 @@ class NodeGene {
         this->type = type;
     }
 
+    // Copy constructor
+    NodeGene(const NodeGene &node2) {
+        this->type = node2.type;
+        this->id = node2.id;
+    }
+
 
     //----Getters----//
 

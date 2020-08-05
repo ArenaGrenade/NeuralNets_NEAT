@@ -47,7 +47,7 @@ class ConnectionGene {
     }
 
 	// The copy constructor
-    // This creates a copy of the given ConnectionGene instance and returns it
+    // This creates a copy of the given ConnectionGene instance
 	ConnectionGene(const ConnectionGene &connection2) {
 		this->in_node = connection2.in_node;
 		this->out_node = connection2.out_node;

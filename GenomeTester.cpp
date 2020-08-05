@@ -27,7 +27,7 @@ int main() {
     genome.addConnection(ConnectionGene(2, 3, 1.090131, true, counter.getNextInnovationNumber(2, 3)));
     genome.addConnection(ConnectionGene(3, 4, 1.02469, true, counter.getNextInnovationNumber(3, 4)));
 
-	/*char output_index_string[90] = { 0 };
+	char output_index_string[90] = { 0 };
 
 	sprintf_s(output_index_string, "./TestGraphs/NodeMutations/%d.txt", 1);
 	std::cout << "Exporting network number " << 1 << " at " << output_index_string << std::endl;
@@ -37,12 +37,16 @@ int main() {
 	for (int i = 2; i < 4; i++) {
 		genome.addNodeMutation(counter);
 		sprintf_s(output_index_string, "./TestGraphs/NodeMutations/%d.txt", i);
-		std::cout << "Exporting network number " << i << " at " << output_index_string << std::endl;
+		std::cout << std::endl << "Exporting network number " << i << " at " << output_index_string << std::endl;
 		exporter.Export(output_index_string, genome);
 		memset(output_index_string, 0, 90);
-	}*/
+	}
 
-	genome.addConnectionMutation(counter);
-	genome.addConnectionMutation(counter);
-	genome.addConnectionMutation(counter);
+	for (int i = 1; i < 10; i++) {
+		genome.addConnectionMutation(counter);
+		sprintf_s(output_index_string, "./TestGraphs/ConnectionMutations/%d.txt", i);
+		std::cout << std::endl << "Exporting network number " << i << " at " << output_index_string << std::endl;
+		exporter.Export(output_index_string, genome);
+		memset(output_index_string, 0, 90);
+	}
 }

@@ -13,4 +13,4 @@ enum Type {INPUT, HIDDEN, OUTPUT};
 char GRAPH_SAVE_PATH[] = "C:/Users/rohan/Documents/Coding/C++/NeuralNets_NEAT/TestGraphs/NodeMutations/";
 
 // The connection mutation requires some pruning. This value denotes the maximum number of steps to perform before stopping the mutation.
-lint MAX_CONNECTION_MUTATION_TRIES = 100;
+lint MAX_CONNECTION_MUTATION_TRIES = 20;
