@@ -14,12 +14,21 @@ class Genome {
 	* connection_genes - std::map<long long int, ConnectionGene>: The C++ map that consists of the Innovation number and the ConnectionGene
 	*/
 
-  private:
+private:
 	lint node_counter;
 	std::map<lint, NodeGene> node_genes;
 	std::map<lint, ConnectionGene> connection_genes;
 
-  public:
+	std::vector<lint> getConnectionsCopyAsSortedList() {
+		std::vector<lint> innovations;
+		for (auto connection : connection_genes) {
+			innovations.push_back(connection.first);
+		}
+		std::sort(innovations.begin(), innovations.end());
+		return innovations;
+	}
+
+public:
 	//----Constructors----//
 
 	// Base constructor for the class
@@ -209,18 +218,67 @@ class Genome {
 	float compatibilityDistance(Genome genomeA, Genome genomeB, float c1, float c2, float c3) {
 		auto gene_counts = getGeneTypeCounts(genomeA, genomeB);
 		lint match_genes = gene_counts.first;
-		lint disjoint_genes - gene_counts.second.first;
+		lint disjoint_genes = gene_counts.second.first;
 		lint excess_genes = gene_counts.second.second;
 
-		double avg_weight_diff = calculateAvgWeightDiff(genomeA, genomeB, match_genes);
+		double avg_weight_diff = calculateAvgWeightDiffRatio(genomeA, genomeB);
 		return excess_genes * c1 + disjoint_genes * c2 + avg_weight_diff * c3;
 	}
 
 	std::pair<lint, std::pair<lint, lint>> getGeneTypeCounts(Genome genomeA, Genome genomeB) {
+		lint match_genes = 0;
+		lint disjoint_genes = 0;
 
+		std::vector<lint> innov_genomeA = genomeA.getConnectionsCopyAsSortedList();
+		std::vector<lint> innov_genomeB = genomeB.getConnectionsCopyAsSortedList();
+
+		std::reverse(innov_genomeA.begin(), innov_genomeA.end());
+		std::reverse(innov_genomeB.begin(), innov_genomeB.end());
+
+		lint list_indA = innov_genomeA.size() - 1;
+		lint list_indB = innov_genomeB.size() - 1;
+
+		while (list_indA >= 0 || list_indB >= 0) {
+			if (innov_genomeA[list_indA] == innov_genomeB[list_indB]) {
+				list_indA--;
+				list_indB--;
+				match_genes++;
+				innov_genomeA.pop_back();
+				innov_genomeB.pop_back();
+			} 
+			else if (innov_genomeA[list_indA] < innov_genomeB[list_indB]) {
+				list_indA--;
+				disjoint_genes++;
+				innov_genomeA.pop_back();
+			}
+			else {
+				list_indB--;
+				disjoint_genes++;
+				innov_genomeB.pop_back();
+			}
+		}
+		lint excess_genes = innov_genomeA.size() + innov_genomeB.size();
+
+		return std::make_pair(match_genes, std::make_pair(disjoint_genes, excess_genes));
 	}
 
-	double calculateAvgWeightDiff(Genome genomeA, Genome genomeB, lint count_match_genes) {
+	double calculateAvgWeightDiffRatio(Genome genomeA, Genome genomeB) {
 		double weightDifference = 0;
+		lint gene_matches = 0;
+
+		std::vector<lint> innov_genomeA = genomeA.getConnectionsCopyAsSortedList();
+		std::vector<lint> innov_genomeB = genomeB.getConnectionsCopyAsSortedList();
+
+		lint max_loop_index = std::max(innov_genomeA[innov_genomeA.size() - 1], innov_genomeB[innov_genomeB.size() - 1]);
+		for (lint ind = 0; ind <= max_loop_index; ind++) {
+			auto connection_geneA = genomeA.getConnectionGenes().find(ind);
+			auto connection_geneB = genomeB.getConnectionGenes().find(ind);
+			if (connection_geneA != genomeA.getConnectionGenes().end() && connection_geneB != genomeB.getConnectionGenes().end()) {
+				gene_matches++;
+				weightDifference += std::abs((*connection_geneA).second.getWeight() - (*connection_geneB).second.getWeight());
+			}
+
+			return weightDifference / gene_matches;
+		}
 	}
 };

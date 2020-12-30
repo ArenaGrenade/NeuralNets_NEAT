@@ -3,13 +3,13 @@
 #endif
 
 class GraphExporter {
-    private:
+private:
     std::vector<std::vector<lint>> graph;
     std::ofstream fout;
     lint graph_size;
     std::map<lint, ConnectionGene> present_connections;
     
-    public:
+public:
     GraphExporter() {
         graph_size = 1;
     }

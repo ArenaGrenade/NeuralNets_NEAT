@@ -17,11 +17,11 @@ class NodeGene {
      Setter Methods
     */
 
-  private:
+private:
     lint id;
     Type type;
 
-  public:
+public:
     //----Constructors----//
 
     // Base constructor

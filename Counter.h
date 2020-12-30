@@ -17,10 +17,10 @@ class InnovationCounter {
      Setter methods
     */
 
-  private:
+private:
     lint present_count;
 	std::map<std::pair<lint, lint>, lint> innovation_list;
-  public:
+public:
     //----Constructors----//
     
     // The base constructor for this class

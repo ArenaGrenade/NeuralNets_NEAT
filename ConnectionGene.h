@@ -27,14 +27,14 @@ class ConnectionGene {
     bool isEnabled();
     */
 
-  private:
+private:
     lint in_node;
     lint out_node;
     double weight;
     bool enabled;
     lint innovation_number;
 
-  public:
+public:
     //----Constructors----//
 
     // The base constructor for the class.
