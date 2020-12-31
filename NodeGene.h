@@ -3,49 +3,52 @@
 #endif
 
 class NodeGene {
-    /*
-    ----NodeGene Class----
+    /**
+     * @brief This class describes a Node in the network.
+     * 
+     */
 
-     This class describe a Node in the network. Describes the following parameters of it.
-    * id - long long int: The ID given to the current node.
-    * type - enum Type: Describes the type of the node (Input, Hiddden, Output)
+    private:
+        lint id;
+        Type type;
 
-     Getter Methods
-    long long int getId();
-    enum Type getType();
+    public:
+        /**
+         * @brief Construct a new Node Gene object
+         * 
+         * @param id The ID of the new Node
+         * @param type THe type of the node
+         */
+        NodeGene(lint id, Type type) {
+            this->id = id;
+            this->type = type;
+        }
 
-     Setter Methods
-    */
+        /**
+         * @brief Create a copy of a Node Gene object
+         * 
+         * @param node2 Node to be copied
+         */
+        NodeGene(const NodeGene &node2) {
+            this->type = node2.type;
+            this->id = node2.id;
+        }
 
-private:
-    lint id;
-    Type type;
+        /**
+         * @brief Get the Id of the Node object
+         * 
+         * @return lint The ID of the Node object
+         */
+        lint getId()  {
+            return this->id;
+        }
 
-public:
-    //----Constructors----//
-
-    // Base constructor
-    NodeGene(lint id, Type type) {
-        this->id = id;
-        this->type = type;
-    }
-
-    // Copy constructor
-    NodeGene(const NodeGene &node2) {
-        this->type = node2.type;
-        this->id = node2.id;
-    }
-
-
-    //----Getters----//
-
-    // Returns the ID of this node
-    lint getId()  {
-        return this->id;
-    }
-
-    // Returns the node type of this node
-    Type getType() {
-        return this->type;
-    }
+        /**
+         * @brief Get the Type of the Node object
+         * 
+         * @return Type The type of the Node object
+         */
+        Type getType() {
+            return this->type;
+        }
 };
