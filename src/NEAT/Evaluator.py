@@ -2,9 +2,11 @@ from Genome import Genome
 from random import Random
 from Species import Species
 from functools import reduce
+import json
+from dotted_dict import DottedDict
 
 class Evaluator:
-    def __init__(self, fitness_function, innovator):
+    def __init__(self, fitness_function, innovator, config_path):
         self.current_generation = {}
         self.previous_generation = {}
         self.random = Random()
@@ -12,15 +14,21 @@ class Evaluator:
         self.fitness_function = fitness_function
         self.innovator = innovator
 
+        self.config = self.parse_config(config_path)
+
+    def parse_config(self, config_path):
+        with open(config_path, 'r') as config_file:
+            parsed_config = json.load(config_file)
+        with open("default_config.json", 'r') as default_config_file:
+            default_config = json.load(default_config_file)
+        config_dict = {**default_config, **parsed_config}
+        return DottedDict(config_dict)
+
     def initialize_population(self, population=None, size=None):
         if population is not None:
             self.previous_generation = population
 
-    def evaluate_generation(self):
-        #! useless constants to go into config
-        SELECTION_RATIO = 0.1
-        DISABLED_GENE_INHERITING_CHANCE = 0.5
-        #!
+    def evolve_generation(self):
         # Score each genome
         for fit_genome in self.previous_generation:
             fit_genome.fitness = self.fitness_function(fit_genome)
@@ -30,7 +38,7 @@ class Evaluator:
         self.best_individual = self.previous_generation[0]
 
         # Perform selection of the needed ration
-        select_count = max(3, int(SELECTION_RATIO * len(self.previous_generation)))
+        select_count = max(3, int(self.config.SELECTION_RATIO * len(self.previous_generation)))
         self.current_generation = parents = self.previous_generation[:select_count]
 
         # Perform random mating and also perform mutation to generate next generation
@@ -38,7 +46,7 @@ class Evaluator:
         while num_generated < len(self.previous_generation) - select_count:
             parent1 = self.random.choice(parents)
             parent2 = self.random.choice([parent for parent in parents if parent != parent1])
-            child = Genome.crossover(parent1, parent2, self.random, DISABLED_GENE_INHERITING_CHANCE)
+            child = Genome.crossover(parent1, parent2, self.random, self.config.DISABLED_GENE_INHERITING_CHANCE)
 
             child.add_connection_mutation(self.random, self.innovator)
 
@@ -48,12 +56,7 @@ class Evaluator:
         # Shift all data lists and perform any needed checkpoint stores or run provided call back function
         self.previous_generation = self.current_generation
 
-    def speciated_evaluation(self):
-        #! Random constants to be removed
-        COMPATIBILITY_THRESHOLD = 5.0
-        SELECTION_RATIO = 0.6
-        POPULATION_SIZE = 10
-        #!
+    def evolve_generation_speciated(self):
         # Clean out our previous species array
         species_list = []
         self.current_generation = {}
@@ -64,7 +67,7 @@ class Evaluator:
 
             genome_added = False
             for species in species_list:
-                if Genome.compatibility_distance(self.previous_generation[species.representor_id], genome) <= COMPATIBILITY_THRESHOLD:
+                if Genome.compatibility_distance(self.previous_generation[species.representor_id], genome) <= self.config.COMPATIBILITY_THRESHOLD:
                     species.add_genome(genome.id, genome.fitness)
                     genome_added = True
                     break
@@ -77,7 +80,7 @@ class Evaluator:
                 self.previous_generation[genome_id].fitness /= species.count_organisms
         # Kill off low performing individuals
         fitness_sorted_genome_ids = [genome[0] for genome in sorted(self.previous_generation.items(), key=lambda genome: genome[1].fitness, reverse=True)]
-        parents = fitness_sorted_genome_ids[:int(SELECTION_RATIO * POPULATION_SIZE)]
+        parents = fitness_sorted_genome_ids[:int(self.config.SELECTION_RATIO * self.config.POPULATION_SIZE)]
         for species in species_list:
             for genome_id in species.genomes:
                 if genome_id not in parents:
@@ -88,17 +91,17 @@ class Evaluator:
         # Create offspring to fill up remaining space by random mating and mutations based on species size
         for (index, child_count) in enumerate(per_species_allocation):
             for _ in range(child_count):
-                parent1 = self.random.choice(species_list[index].genomes)
-                parent2 = self.random.choice([genome for genome in species_list[index].genomes if genome != parent1])
+                parent1 = self.previous_generation[self.random.choice(species_list[index].genomes)]
+                parent2 = self.previous_generation[self.random.choice([genome for genome in species_list[index].genomes if genome != parent1])]
                 child = Genome.generate_offspring(parent1, parent2)
                 self.current_generation[child.id] = child
         
-        present_size = len(self.current_generation)
+        present_population_size = len(self.current_generation)
         while present_size <= POPULATION_SIZE:
-            parent1 = self.random.choice(parents)
-            parent2 = self.random.choice([parent for parent in parents if parent != parent1])
+            parent1 = self.previous_generation[self.random.choice(parents)]
+            parent2 = self.previous_generation[self.random.choice([parent for parent in parents if parent != parent1])]
             child = Genome.generate_offspring(parent1, parent2)
             self.current_generation[child] = child
-            present_size += 1
+            present_population_size += 1
         # Update all lists and perform logging
         self.previous_generation = self.current_generation

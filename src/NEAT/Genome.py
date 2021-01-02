@@ -61,7 +61,7 @@ class Genome:
         connection = ConnectionGene(*selected_connection, weight, True, innovation_number)
         self.connection_genes[innovation_number] = connection
 
-    def add_node_mutation(self, random_gen, node_classe, innovator):
+    def add_node_mutation(self, random_gen, node_classes, innovator):
         if not node_classes:
             return
 
@@ -133,10 +133,34 @@ class Genome:
         return child
     
     @staticmethod
-    def generate_offspring(genomeA, genomeB=None):
+    def generate_offspring(genomeA, genomeB=None, random_gen, node_classes, innovator, config):
         # If only one genome, just do mutations
         # If both genomes are present perform a crossover alongwith mutations
-        pass
+        if genomeB:
+            # Sexual Reproduction
+            # Crossover
+            if genomeA.fitness > genomeB.fitness:
+                child = crossover(genomeA, genomeB)
+            else:
+                child = crossover(genomeB, genomeA)
+            # Mutations
+            # Weight Mutations
+            if random_gen.random() < config.MUTATION_RATE:
+                child.add_weight_mutation(random_gen)
+            # Connection Mutations
+            if random_gen.random() < config.CONNECTION_MUTATION_RATE:
+                child.add_connection_mutation(random_gen, innovator)
+            # Node Mutations
+            if random_gen.random() < config.NODE_MUTATION_RATE:
+                child.add_node_mutation(random_gen, node_classes, innovator)
+        else:
+            # Asexual Reproduction
+            child = deepcopy(genomeA)
+            # Mutation
+            child.add_weight_mutation(random_gen)
+        
+        return child
+        
     
     @staticmethod
     def gene_type_counts(genomeA, genomeB):
