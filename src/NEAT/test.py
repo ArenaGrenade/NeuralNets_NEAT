@@ -39,11 +39,10 @@ def simple_fitness(genome):
 def print_sizes(evaluator):
     print("###############################################################################")
     for index, genome in enumerate(evaluator.previous_generation):
-        print("conns ", index, ": ", len(genome.genome.connection_genes), " with fitness ", evaluator.fitness_function(genome.genome))
+        print("conns ", index, ": ", len(genome.genome.connection_genes), " with fitness ", evaluator.fitness_function(genome))
     print("###############################################################################")
 
-if __name__ == '__main__':
-    """
+def conn_mut_test():
     i = Innovator()
     r = random.Random()
     g1 = generate_genome(4, i)
@@ -55,7 +54,8 @@ if __name__ == '__main__':
     g1.vizualize_genome(2, "G2")
 
     plt.show()
-    """
+
+def basic_eval_test():
     i = Innovator()
     e = Evaluator(simple_fitness, i)
 
@@ -63,7 +63,10 @@ if __name__ == '__main__':
 
     e.initialize_population(genomes)
 
-    for _ in range(100):
+    for _ in range(300):
         e.evaluate_generation()
-        print("Generation ", _, ": with best indiv ", len(e.best_individual.genome.connection_genes), " and best fitness ", e.best_individual.fitness)
+        print("Generation ", _, ": with best indiv ", len(e.best_individual.connection_genes), " and best fitness ", e.best_individual.fitness)
         # print_sizes(e)
+
+if __name__ == '__main__':
+    

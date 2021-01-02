@@ -9,10 +9,13 @@ from copy import deepcopy
 from math import fabs
 
 class Genome:
-    def __init__(self):
+    def __init__(self, id):
         self.node_genes = {}
         self.connection_genes = {}
         self.config = {}
+        self.fitness = 0.0
+
+        self.id = id
 
     def add_node_gene(self, gene):
         if issubclass(type(gene), AbstractNodeGene):
@@ -128,6 +131,12 @@ class Genome:
                 child.add_connection_gene(child_conn_gene)
         
         return child
+    
+    @staticmethod
+    def generate_offspring(genomeA, genomeB=None):
+        # If only one genome, just do mutations
+        # If both genomes are present perform a crossover alongwith mutations
+        pass
     
     @staticmethod
     def gene_type_counts(genomeA, genomeB):
