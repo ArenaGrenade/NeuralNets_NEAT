@@ -6,7 +6,7 @@ class Species:
         self.genomes = [representor_id]
     
     def add_genome(self, genome_id, fitness):
-        if genome_id in self.organisms:
+        if genome_id in self.genomes:
             return
         
         self.genomes.append(genome_id)
